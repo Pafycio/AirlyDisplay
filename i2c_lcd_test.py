@@ -36,23 +36,23 @@ def test_main():
         time.sleep(1)
         count += 1
         if count % 10 == 3:
-            print "Turning backlight off"
+            print("Turning backlight off")
             lcd.backlight_off()
         if count % 10 == 4:
-            print "Turning backlight on"
+            print("Turning backlight on")
             lcd.backlight_on()
         if count % 10 == 5:
-            print "Turning display off"
+            print("Turning display off")
             lcd.display_off()
         if count % 10 == 6:
-            print "Turning display on"
+            print("Turning display on")
             lcd.display_on()
         if count % 10 == 7:
-            print "Turning display & backlight off"
+            print("Turning display & backlight off")
             lcd.backlight_off()
             lcd.display_off()
         if count % 10 == 8:
-            print "Turning display & backlight on"
+            print("Turning display & backlight on")
             lcd.backlight_on()
             lcd.display_on()
 
