@@ -50,15 +50,15 @@ class Display(object):
         counter = 0
         while True:
             if counter == 0:
-                result = getData()
+                self.result = getData()
                 counter = 5
 
-            if result:
+            if self.result:
                 self.writeDateTime()
                 self.writeTempPm()
 
             else:
-                print("Result {}".format(result))
+                print("Result {}".format(self.result))
 
             time.sleep(60)
             counter -= 1
