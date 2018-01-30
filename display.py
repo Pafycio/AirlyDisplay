@@ -32,14 +32,16 @@ class Display(object):
     def writeTempPm(self):
         self.lcd.move_to(0, 1)
         self.lcd.putstr(str(self.result.temperature))
-        self.lcd.putchar(0)
+        self.lcd.putchar(chr(0))
         self.lcd.putstr(' ')
         self.lcd.putstr(str(self.result.pm10))
-        self.lcd.putchar(4)
+        self.lcd.putchar(chr(1))
+        self.lcd.putchar(chr(4))
         self.lcd.putstr(' ')
         self.lcd.putstr(str(self.result.pm25))
-        self.lcd.putchar(2)
-        self.lcd.putchar(3)
+        slef.lcd.putchar(chr(1))
+        self.lcd.putchar(chr(2))
+        self.lcd.putchar(chr(3))
 
     def mainLoop(self):
         """
