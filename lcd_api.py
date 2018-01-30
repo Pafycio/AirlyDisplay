@@ -158,11 +158,15 @@ class LcdApi:
         """
         location &= 0x7
         self.hal_write_command(self.LCD_CGRAM | (location << 3))
-        time.sleep_us(40)
+        self.usleep(40)
         for i in range(8):
             self.hal_write_data(charmap[i])
-            time.sleep_us(40)
+            self.usleep(40)
         self.move_to(self.cursor_x, self.cursor_y)
+
+    @staticmethod
+    def usleep(sec):
+        time.sleep(sec/1000000.0)
 
     def hal_backlight_on(self):
         """Allows the hal layer to turn the backlight on.
