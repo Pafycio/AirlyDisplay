@@ -1,9 +1,5 @@
 import requests
-import json
 import attr
-from datetime import datetime
-import time
-import subprocess
 
 # TODO:
 # Wyswietlacz na rasbi i2c
@@ -25,15 +21,6 @@ class Weather(object):
     pollutionLevel = attr.ib(converter=int, default=0)
     pressure = attr.ib(converter=int, default=0)
     temperature = attr.ib(convert=int, default=0)
-
-    def getDateTime(self):
-        date = time.strftime("%H:%M %d-%m-%Y", datetime.now().timetuple())
-        return "{}".format(date)
-
-    def getTempPm(self):
-        return "{}C {}PM10 {}PM25".format(self.temperature,
-                                          self.pm10,
-                                          self.pm25)
 
 def getURL(latitude, longitude):
     return URL.format(latitude, longitude, APIKEY)
