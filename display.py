@@ -9,8 +9,8 @@ class DisplayViews(object):
 
     def mainView(self):
         """
-        __HH:MM_DD-MM-RRRR__ 20
-        _+XX(oC)_XXX(pm)(2)(5)_XXX(pm)(1)(0)_ 20
+        __HH:MM_DD-MM-RRRR__ 16
+        _+XX(oC)_XXX(pm)(2)(5)_XXX(pm)(1)(0)_ 16
         :return: 
         """
         line_1 = ''
