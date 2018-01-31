@@ -1,14 +1,9 @@
 import requests
 import attr
 
-# TODO:
-# Wyswietlacz na rasbi i2c
-# Wyswietlanie info
-# Godzina
-
 # STATIC
 URL = 'https://airapi.airly.eu/v1/mapPoint/measurements?latitude={}&longitude={}&apikey={}'
-APIKEY = '474c2774e7d142548c5a8b0d121c0d15'
+APIKEY = ''
 
 
 @attr.s(frozen=True)
