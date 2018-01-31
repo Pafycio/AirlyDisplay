@@ -1,4 +1,7 @@
-"""Implements a HD44780 character LCD connected via PCF8574 on I2C."""
+"""
+Source GIT project : https://github.com/dhylands/python_lcd
+Implements a HD44780 character LCD connected via PCF8574 on I2C.
+"""
 
 from lcd_api import LcdApi
 import smbus2

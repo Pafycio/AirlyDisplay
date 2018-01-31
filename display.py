@@ -1,6 +1,7 @@
-from i2c_lcd import I2cLcd
-from weather_clock import getData
 import time
+import begin
+from i2c_lcd import I2cLcd
+from weather_clock import RequestHandler
 from datetime import datetime
 
 DEFAULT_I2C_ADDR = 0x27
@@ -11,12 +12,13 @@ two = bytearray([0x00, 0x00, 0x08, 0x14, 0x04, 0x08, 0x10, 0x1D])
 five = bytearray([0x00, 0x00, 0x1C, 0x10, 0x18, 0x04, 0x04, 0x18])
 ten = bytearray([0x00, 0x00, 0x12, 0x15, 0x15, 0x15, 0x15, 0x12])
 
+
 class Display(object):
-    def __init__(self):
+    def __init__(self, request_handler):
+        self.req_handler = request_handler
         self.lcd = I2cLcd(1, DEFAULT_I2C_ADDR, 2, 16)
         self.result = None
         self.addCustomChars()
-        self.mainLoop()
 
     def addCustomChars(self):
         self.lcd.custom_char(0, celsius)
@@ -44,28 +46,17 @@ class Display(object):
         self.lcd.putchar(chr(3))
 
     def mainLoop(self):
-        """
-        __HH:MM_DD-MM-RRRR__ 16
-        _+XX(oC)_XXX(pm)(2)(5)_XXX(pm)(10)_ 16
-        :return: 
-        """
-        counter = 0
         while True:
-            if counter == 0:
-                self.result = getData()
-                counter = 5
-
-            if self.result:
-                self.lcd.clear()
-                self.writeDateTime()
-                self.writeTempPm()
-
-            else:
-                print("Result {}".format(self.result))
+            self.lcd.clear()
+            self.writeDateTime()
+            self.writeTempPm()
 
             time.sleep(60)
-            counter -= 1
 
-if __name__ == '__main__':
-    display = Display()
 
+@begin.start
+def run(apikey):
+    req_handler = RequestHandler(apikey)
+    display = Display(req_handler)
+
+    display.mainLoop()
