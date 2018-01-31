@@ -1,8 +1,10 @@
 import time
 import begin
+from datetime import datetime
+
 from i2c_lcd import I2cLcd
 from weather_clock import RequestHandler
-from datetime import datetime
+
 
 DEFAULT_I2C_ADDR = 0x27
 
@@ -28,22 +30,44 @@ class Display(object):
         self.lcd.custom_char(4, ten)
 
     def writeDateTime(self):
+        """Print TIME on first line"""
         self.lcd.move_to(0, 0)
-        self.lcd.putstr(time.strftime("%H:%M %d-%m-%Y", datetime.now().timetuple()))
+        self.addTime()
 
     def writeTempPm(self):
+        """Print TEMP PM10 PM25 on second line"""
         self.lcd.move_to(0, 1)
+        self.addTemp()
+        self.addSpace()
+        self.addPM10()
+        self.addSpace()
+        self.addPM25()
+
+    def addTime(self):
+        """HH:MM DD-MM-YYYY"""
+        self.lcd.putstr(time.strftime("%H:%M %d-%m-%Y", datetime.now().timetuple()))
+
+    def addTemp(self):
+        """(-)temp(C)"""
         self.lcd.putstr(str(self.result.temperature))
         self.lcd.putchar(chr(0))
-        self.lcd.putstr(' ')
+
+    def addPM10(self):
+        """pm10(pm)(10)"""
         self.lcd.putstr(str(self.result.pm10))
         self.lcd.putchar(chr(1))
         self.lcd.putchar(chr(4))
-        self.lcd.putstr(' ')
+
+    def addPM25(self):
+        """pm25(pm)(2.)(5)"""
         self.lcd.putstr(str(self.result.pm25))
         self.lcd.putchar(chr(1))
         self.lcd.putchar(chr(2))
         self.lcd.putchar(chr(3))
+
+    def addSpace(self):
+        """( )"""
+        self.lcd.putstr(' ')
 
     def updateResult(self):
         self.result = self.req_handler.getResult('50.07874', '20.02901')
@@ -55,7 +79,7 @@ class Display(object):
             self.writeDateTime()
             self.writeTempPm()
 
-            time.sleep(60)
+            time.sleep(30)
 
 
 @begin.start

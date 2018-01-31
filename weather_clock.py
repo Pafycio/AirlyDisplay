@@ -22,6 +22,12 @@ class Weather(object):
 
 class RequestHandler(object):
     def __init__(self, apikey):
+        """
+        :param apikey: you can get your key there https://developer.airly.eu/
+        :var request_delay: delay between GET in minutes
+        :var next_req: time when we should update data
+        :var result: GET result in Weather object 
+        """
         self.apikey = apikey
         self.request_delay = 5
         self.next_req = datetime.now()
