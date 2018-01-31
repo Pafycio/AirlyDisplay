@@ -46,7 +46,7 @@ class Display(object):
         self.lcd.putchar(chr(3))
 
     def updateResult(self):
-        self.req_handler.getResult('50.07874', '20.02901')
+        self.result = self.req_handler.getResult('50.07874', '20.02901')
 
     def mainLoop(self):
         while True:
