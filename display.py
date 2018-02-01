@@ -72,7 +72,7 @@ class Display(object):
 
     def addPressure(self):
         """press(hP)(a)"""
-        self.lcd.putstr(str(self.result.pressure))
+        self.lcd.putstr(str(self.result.pressure/100))
         self.lcd.putchar(chr(5))
         self.lcd.putchar(chr(6))
 
