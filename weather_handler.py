@@ -88,3 +88,4 @@ class OpenWeatherHandler(Handler):
         self.updateResult(latitude, longitude)
         current = self.result['main']
         return OpenWeather(**current)
+

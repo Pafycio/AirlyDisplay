@@ -98,7 +98,7 @@ class Display(object):
 
     def updateResult(self):
         self.airly = self.airly_handler.getCurrentWeather('50.07874', '20.02901')
-        self.open_weather = self.open_weather.getCurrentWeather('50.07874', '20.02901')
+        self.open_weather = self.open_weather_handler.getCurrentWeather('50.07874', '20.02901')
 
     def mainLoop(self):
         while True:
