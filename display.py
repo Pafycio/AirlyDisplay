@@ -3,7 +3,7 @@ import begin
 from datetime import datetime
 
 from i2c_lcd import I2cLcd
-from weather_clock import RequestHandler
+from weather_handler import AirlyHandler, OpenWeatherHandler
 
 
 DEFAULT_I2C_ADDR = 0x27
@@ -17,11 +17,14 @@ ten = bytearray([0x00, 0x00, 0x12, 0x15, 0x15, 0x15, 0x15, 0x12])
 h = bytearray([0x00, 0x00, 0x11, 0x11, 0x11, 0x1D, 0x15, 0x15])
 pa = bytearray([0x00, 0x00, 0x18, 0x08, 0x18, 0x06, 0x0A, 0x0F])
 
+
 class Display(object):
-    def __init__(self, request_handler):
-        self.req_handler = request_handler
+    def __init__(self, airly_handler, open_weather_handler):
+        self.airly_handler = airly_handler
+        self.open_weather_handler = open_weather_handler
         self.lcd = I2cLcd(1, DEFAULT_I2C_ADDR, 2, 16)
-        self.result = None
+        self.airly = None
+        self.open_weather = None
         self.addCustomChars()
 
     def addCustomChars(self):
@@ -62,29 +65,29 @@ class Display(object):
 
     def addTemp(self):
         """(-)temp(C)"""
-        self.lcd.putstr(str(self.result.temperature))
+        self.lcd.putstr(str(self.open_weather.temp))
         self.lcd.putchar(chr(0))
 
     def addHumidity(self):
         """hum(%)"""
-        self.lcd.putstr(str(self.result.humidity))
+        self.lcd.putstr(str(self.open_weather.humidity))
         self.lcd.putstr("%")
 
     def addPressure(self):
         """press(hP)(a)"""
-        self.lcd.putstr(str(int(self.result.pressure/100)))
+        self.lcd.putstr(str(int(self.open_weather.pressure)))
         self.lcd.putchar(chr(5))
         self.lcd.putchar(chr(6))
 
     def addPM10(self):
         """pm10(pm)(10)"""
-        self.lcd.putstr(str(self.result.pm10))
+        self.lcd.putstr(str(self.airly.pm10))
         self.lcd.putchar(chr(1))
         self.lcd.putchar(chr(4))
 
     def addPM25(self):
         """pm25(pm)(2.)(5)"""
-        self.lcd.putstr(str(self.result.pm25))
+        self.lcd.putstr(str(self.airly.pm25))
         self.lcd.putchar(chr(1))
         self.lcd.putchar(chr(2))
         self.lcd.putchar(chr(3))
@@ -94,7 +97,8 @@ class Display(object):
         self.lcd.putstr(' ')
 
     def updateResult(self):
-        self.result = self.req_handler.getResult('50.07874', '20.02901')
+        self.airly = self.airly_handler.getCurrentWeather('50.07874', '20.02901')
+        self.open_weather = self.open_weather.getCurrentWeather('50.07874', '20.02901')
 
     def mainLoop(self):
         while True:
@@ -108,8 +112,9 @@ class Display(object):
 
 
 @begin.start
-def run(apikey):
-    req_handler = RequestHandler(apikey)
-    display = Display(req_handler)
+def run(airly_apikey, open_weather_apikey):
+    airly_handler = AirlyHandler(airly_apikey)
+    open_weather_handler = OpenWeatherHandler(open_weather_apikey)
+    display = Display(airly_handler, open_weather_handler)
 
     display.mainLoop()
