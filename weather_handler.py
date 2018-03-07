@@ -1,3 +1,4 @@
+from os import system
 import requests
 import attr
 from datetime import datetime, timedelta
@@ -34,7 +35,7 @@ class Handler(object):
         :param apikey: you can get your key there https://developer.airly.eu/
         :var request_delay: delay between GET in minutes
         :var next_req: time when we should update data
-        :var result: GET result in Weather object 
+        :var result: GET result in Weather object
         """
         self.apikey = apikey
         self.URL = url
@@ -42,6 +43,7 @@ class Handler(object):
 
         self._next_req = datetime.now()
         self.result = None
+        self.connected = False
 
     def isUpdateTime(self):
         now = datetime.now()
@@ -59,11 +61,21 @@ class Handler(object):
             self.result = r.json()
 
     def updateResult(self, latitude, longitude):
-        if self.isUpdateTime():
+        if self.isUpdateTime() and self.isConnected():
             self.executeRequest(latitude, longitude)
 
     def getCurrentWeather(self, latitude, longitude):
         raise NotImplemented('Not implemented !')
+
+    def isConnected(self):
+        connection = system('ping -c 1 google.com')
+
+        if connection:
+            self.connected = True
+        else:
+            self.connected = False
+
+        return self.connected
 
 
 class AirlyHandler(Handler):
@@ -88,4 +100,3 @@ class OpenWeatherHandler(Handler):
         self.updateResult(latitude, longitude)
         current = self.result['main']
         return OpenWeather(**current)
-

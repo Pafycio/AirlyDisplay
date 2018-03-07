@@ -37,12 +37,12 @@ class Display(object):
         self.lcd.custom_char(6, pa)
 
     def writeDateTime(self, line):
-        """Print TIME on first line"""
+        """Print TIME"""
         self.lcd.move_to(0, line)
         self.addTime()
 
     def writeTempPm(self, line):
-        """Print TEMP PM10 PM25 on second line"""
+        """Print TEMP PM10 PM25"""
         self.lcd.move_to(0, line)
         self.addTemp()
         self.addSpace()
@@ -51,7 +51,7 @@ class Display(object):
         self.addPM25()
 
     def writeTempHumPress(self, line):
-        """Print TEMP PM10 PM25 on second line"""
+        """Print TEMP PM10 PM25"""
         self.lcd.move_to(0, line)
         self.addTemp()
         self.addSpace()
@@ -59,9 +59,23 @@ class Display(object):
         self.addSpace()
         self.addPressure()
 
+    def writeNoConnection(self, line):
+        """Animate no WiFi """
+        self.lcd.move_to(0, line)
+        self.addText(' << No  WiFi >> ')
+        time.sleep(1)
+        self.addText(' <> No  WiFi <> ')
+        time.sleep(1)
+        self.addText(' << No  WiFi >> ')
+        time.sleep(1)
+
+    def addText(self, text):
+        self.lcd.putstr(str(text))
+
     def addTime(self):
         """HH:MM DD-MM-YYYY"""
-        self.lcd.putstr(time.strftime("%H:%M %d-%m-%Y", datetime.now().timetuple()))
+        self.lcd.putstr(time.strftime(
+            "%H:%M %d-%m-%Y", datetime.now().timetuple()))
 
     def addTemp(self):
         """(-)temp(C)"""
@@ -97,14 +111,20 @@ class Display(object):
         self.lcd.putstr(' ')
 
     def updateResult(self):
-        self.airly = self.airly_handler.getCurrentWeather('50.07874', '20.02901')
-        self.open_weather = self.open_weather_handler.getCurrentWeather('50.07874', '20.02901')
+        self.airly = self.airly_handler.getCurrentWeather(
+            '50.07874', '20.02901')
+        self.open_weather = self.open_weather_handler.getCurrentWeather(
+            '50.07874', '20.02901')
 
     def mainLoop(self):
         while True:
             self.updateResult()
             self.lcd.clear()
             self.writeDateTime(0)
+
+            if not self.airly.isConnected:
+                self.writeNoConnection(1)
+
             self.writeTempPm(1)
             time.sleep(15)
             self.writeTempHumPress(1)
