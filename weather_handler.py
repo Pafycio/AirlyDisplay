@@ -70,12 +70,12 @@ class Handler(object):
         raise NotImplemented('Not implemented !')
 
     def isConnected(self):
-        connection = system('ping -c 1 google.com')
+        no_wifi = system('ping -c 1 google.com')
 
-        if connection:
-            self.connected = True
-        else:
+        if no_wifi:
             self.connected = False
+        else:
+            self.connected = True
 
         return self.connected
 
