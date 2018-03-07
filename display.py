@@ -64,8 +64,10 @@ class Display(object):
         self.lcd.move_to(0, line)
         self.addText(' << No  WiFi >> ')
         time.sleep(1)
+        self.lcd.move_to(0, line)
         self.addText(' <> No  WiFi <> ')
         time.sleep(1)
+        self.lcd.move_to(0, line)
         self.addText(' << No  WiFi >> ')
         time.sleep(1)
 
@@ -122,7 +124,7 @@ class Display(object):
             self.lcd.clear()
             self.writeDateTime(0)
 
-            if not self.airly.isConnected:
+            if not self.airly_handler.connected:
                 self.writeNoConnection(1)
 
             self.writeTempPm(1)
