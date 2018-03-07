@@ -22,11 +22,11 @@ class AirlyWeather(object):
 
 @attr.s(frozen=True)
 class OpenWeather(object):
-    temp_max = attr.ib()
-    temp_min = attr.ib()
-    temp = attr.ib()
-    humidity = attr.ib()
-    pressure = attr.ib()
+    temp_max = attr.ib(default=-1)
+    temp_min = attr.ib(default=-1)
+    temp = attr.ib(default=-1)
+    humidity = attr.ib(default=-1)
+    pressure = attr.ib(default=-1)
 
 
 class Handler(object):
@@ -43,6 +43,7 @@ class Handler(object):
 
         self._next_req = datetime.now()
         self.result = None
+        self.status = None
         self.connected = False
 
     def isUpdateTime(self):
@@ -58,6 +59,7 @@ class Handler(object):
     def executeRequest(self, latitude, longitude):
         with requests.Session() as s:
             r = s.get(self.getURL(latitude, longitude))
+            self.status = r.status_code
             self.result = r.json()
 
     def updateResult(self, latitude, longitude):
@@ -86,8 +88,10 @@ class AirlyHandler(Handler):
 
     def getCurrentWeather(self, latitude, longitude):
         self.updateResult(latitude, longitude)
-        current = self.result['currentMeasurements']
-        return AirlyWeather(**current)
+        if self.status == 200:
+            current = self.result['currentMeasurements']
+            return AirlyWeather(**current)
+        return AirlyWeather()
 
 
 class OpenWeatherHandler(Handler):
@@ -98,5 +102,7 @@ class OpenWeatherHandler(Handler):
 
     def getCurrentWeather(self, latitude, longitude):
         self.updateResult(latitude, longitude)
-        current = self.result['main']
-        return OpenWeather(**current)
+        if self.status == 200:
+            current = self.result['main']
+            return OpenWeather(**current)
+        return OpenWeather()
