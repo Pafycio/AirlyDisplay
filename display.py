@@ -1,5 +1,8 @@
 import time
 import begin
+import os
+import json
+import logging.config
 from datetime import datetime
 
 from i2c_lcd import I2cLcd
@@ -119,18 +122,44 @@ class Display(object):
             '50.07874', '20.02901')
 
     def mainLoop(self):
-        while True:
-            self.updateResult()
-            self.lcd.clear()
-            self.writeDateTime(0)
+        try:
+            while True:
+                self.updateResult()
+                self.lcd.clear()
+                self.writeDateTime(0)
 
-            if not self.airly_handler.connected:
-                self.writeNoConnection(1)
+                if not self.airly_handler.connected:
+                    self.writeNoConnection(1)
 
-            self.writeTempPm(1)
-            time.sleep(15)
-            self.writeTempHumPress(1)
-            time.sleep(15)
+                self.writeTempPm(1)
+                time.sleep(15)
+                self.writeTempHumPress(1)
+                time.sleep(15)
+
+        except Exception as e:
+            logger.error("Unexpected Error", exc_info=True)
+
+
+def setup_logging(
+        default_path='logging.json',
+        default_level=logging.INFO,
+        env_key='LOG_CFG'):
+    """Setup logging configuration"""
+
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
+
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 @begin.start
